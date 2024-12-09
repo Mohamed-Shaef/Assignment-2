@@ -14,7 +14,11 @@ with anyone or anything except for submission for grading.
 I understand that the Academic Honesty Policy will be enforced and 
 violators will be reported and appropriate action will be taken.
 
-Description: <Enter your documentation here>
+Description: This Script works by finding the process ID of a application that the user provides.
+once it has the application name it can search for the Process ID of the application.
+It will find the amount of memory that the application is using out of total and list in a graph.
+if used without an option this script will proivide the total memory and how much of that total
+memory has been used and will also display this in a graph.
 
 '''
 
