@@ -3,11 +3,11 @@
 '''
 OPS445 Assignment 2
 Program: assignment2.py 
-Author: "Student Name"
-Semester: "Enter Winter/Summer/Fall Year"
+Author: Mohamed Shaef
+Semester: Fall 2024
 
 The python code in this file is original work written by
-"Student Name". No code in this file is copied from any other source 
+Mohamed Shaef. No code in this file is copied from any other source 
 except those provided by the course instructor, including any person, 
 textbook, or on-line resource. I have not shared this python script 
 with anyone or anything except for submission for grading.  
@@ -35,9 +35,23 @@ def parse_command_args() -> object:
 # -r running only
 
 def percent_to_graph(percent: float, length: int=20) -> str:
-    "turns a percent 0.0 - 1.0 into a bar graph"
-    ...
-# percent to graph function
+    """
+    This function takes a percentage and from (0.0 to 1.0) and visualizes
+    that percentage as a graph. The range of the percentage is first verified,
+    the number of characters required is then calculated. Finally the function
+    returns the amount required.
+    """
+    
+    # To check the percent is within the range
+    if not (0.0 <= percent <= 1.0):
+        raise ValueError("Percentage must be between 0.0 and 1.0")
+   
+    # Calculate the number of filler characters required
+    filled_length = round(percent * length)
+    empty_length = length - filled_length
+   
+    # Return the bar graph as a string
+    return '=' * filled_length + ' ' * empty_length
 
 def get_sys_mem() -> int:
     "return total system memory (used or available) in kB"
