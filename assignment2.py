@@ -130,23 +130,43 @@ def bytes_to_human_r(kibibytes: int, decimal_places: int=2) -> str:
 
 if __name__ == "__main__":
     args = parse_command_args()
-    if not args.program:
-        ...
-    else:
-        ...
-    # process args
-    # if no parameter passed, 
-    # open meminfo.
-    # get used memory
-    # get total memory
-    # call percent to graph
-    # print
 
-    # if a parameter passed:
-    # get pids from pidof
-    # lookup each process id in /proc
-    # read memory used
-    # add to total used
-    # percent to graph
-    # take total our of total system memory? or total used memory? total used memory.
-    # percent to graph.
+    if not args.program:
+        total_mem = get_sys_mem()
+        available_mem = get_avail_mem()
+        used_mem = total_mem - available_mem
+        percent_used = used_mem / total_mem
+        bar_graph = percent_to_graph(percent_used, args.length)
+
+        if args.human_readable:
+            total_mem_display = bytes_to_human_r(total_mem)
+            used_mem_display = bytes_to_human_r(used_mem)
+        else:
+            total_mem_display = f"{total_mem} kB"
+            used_mem_display = f"{used_mem} kB"
+
+        print(f"Memory         [{bar_graph}] {percent_used:.0%} {used_mem_display}/{total_mem_display}")
+    else:
+        pids = pids_of_prog(args.program)
+        if not pids:
+            print(f"{args.program} not found.")
+            sys.exit(1)
+
+        total_rss = 0
+        for pid in pids:
+            rss = rss_mem_of_pid(pid)
+            total_rss += rss
+            rss_display = bytes_to_human_r(rss) if args.human_readable else f"{rss} kB"
+            print(f"{pid:<15} {rss_display}")
+
+        percent_used = total_rss / get_sys_mem()
+        bar_graph = percent_to_graph(percent_used, args.length)
+
+        if args.human_readable:
+            total_rss_display = bytes_to_human_r(total_rss)
+            total_mem_display = bytes_to_human_r(get_sys_mem())
+        else:
+            total_rss_display = f"{total_rss} kB"
+            total_mem_display = f"{get_sys_mem()} kB"
+
+        print(f"{args.program:<15} [{bar_graph}] {percent_used:.0%} {total_rss_display}/{total_mem_display}")
