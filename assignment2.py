@@ -87,13 +87,10 @@ def pids_of_prog(app_name: str) -> list:
     this function works by finding the process id associated
     with an app name
     """
-    try:
-        with os.popen(f"pidof {app_name}") as process:
-            output = process.read().strip()
-        return output.split() if output else []
-    except Exception as e:
-        print(f"Error fetching PIDs for {app_name}: {e}", file=sys.stderr)
-        return []
+    output = os.popen(f"pidof {app_name}").read().strip()
+    return output.split() if output else []
+
+
     
 def rss_mem_of_pid(proc_id: str) -> int:
     "given a process id, return the resident memory used, zero if not found"
