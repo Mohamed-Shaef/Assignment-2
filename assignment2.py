@@ -26,6 +26,7 @@ def parse_command_args() -> object:
     parser = argparse.ArgumentParser(description="Memory Visualiser -- See Memory Usage Report with bar charts",epilog="Copyright 2023")
     parser.add_argument("-l", "--length", type=int, default=20, help="Specify the length of the graph. Default is 20.")
     # add argument for "human-readable". USE -H, don't use -h! -h is reserved for --help which is created automatically.
+    parser.add_argument("-H", "--human-readable", action="store_true", help="Prints file sizes in human readable format",)
     # check the docs for an argparse option to store this as a boolean.
     parser.add_argument("program", type=str, nargs='?', help="if a program is specified, show memory use of all associated processes. Show only total use is not.")
     args = parser.parse_args()
@@ -81,9 +82,19 @@ def get_avail_mem() -> int:
 
 
 def pids_of_prog(app_name: str) -> list:
-    "given an app name, return all pids associated with app"
-    ...
-
+    """
+    given an app name, return all pids associated with app
+    this function works by finding the process id associated
+    with an app name
+    """
+    try:
+        with os.popen(f"pidof {app_name}") as process:
+            output = process.read().strip()
+        return output.split() if output else []
+    except Exception as e:
+        print(f"Error fetching PIDs for {app_name}: {e}", file=sys.stderr)
+        return []
+    
 def rss_mem_of_pid(proc_id: str) -> int:
     "given a process id, return the resident memory used, zero if not found"
     ...
