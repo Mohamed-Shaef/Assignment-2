@@ -93,8 +93,28 @@ def pids_of_prog(app_name: str) -> list:
 
     
 def rss_mem_of_pid(proc_id: str) -> int:
-    "given a process id, return the resident memory used, zero if not found"
-    ...
+    """
+    given a process id, return the resident memory used, zero if not found
+    this function works by taking the pid of an app and finding the memory 
+    that the application has used
+    """
+    rss_total = 0
+    smaps_path = f"/proc/{proc_id}/smaps"
+
+    try:
+        with open(smaps_path, "r") as smaps_file:
+            for line in smaps_file:
+                if line.startswith("Rss:"):
+                    rss_total += int(line.split()[1])  # Extract memory in kB
+    except FileNotFoundError:
+        # Process may have ended; return 0
+        return 0
+    except Exception as e:
+        # Log unexpected errors and return 0
+        print(f"Error reading smaps for PID {proc_id}: {e}", file=sys.stderr)
+        return 0
+
+    return rss_total
 
 def bytes_to_human_r(kibibytes: int, decimal_places: int=2) -> str:
     "turn 1,024 into 1 MiB, for example"
