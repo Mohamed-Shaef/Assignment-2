@@ -54,12 +54,31 @@ def percent_to_graph(percent: float, length: int=20) -> str:
     return '=' * filled_length + ' ' * empty_length
 
 def get_sys_mem() -> int:
-    "return total system memory (used or available) in kB"
-    ...
+    """
+    This function works by accessing /proc/meminfo to determine
+    the total system memory. 
+    """
+
+    with open('/proc/meminfo', 'r') as meminfo:
+        for line in meminfo:
+            if line.startswith("MemTotal:"):
+                return int(line.split()[1])  # find the value in kB
+    raise ValueError("MemTotal not found in /proc/meminfo")
 
 def get_avail_mem() -> int:
-    "return total memory that is available"
-    ...
+    """
+    This function works by accessing /proc/meminfo to determine
+    the total memory available 
+    """
+
+    with open('/proc/meminfo', 'r') as meminfo:
+        for line in meminfo:
+            if line.startswith("MemAvailable:"):
+                return int(line.split()[1])  # find the value in kB
+    raise ValueError("MemAvailable not found in /proc/meminfo")
+
+
+
 
 def pids_of_prog(app_name: str) -> list:
     "given an app name, return all pids associated with app"
